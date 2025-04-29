@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HD 80606b Orbit Simulation</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="orbitCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('orbitCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const semiMajor = 250; // size of orbit (major axis)
+    const eccentricity = 0.93;
+    const semiMinor = Math.sqrt(Math.pow(semiMajor, 2) * (1 - Math.pow(eccentricity, 2)));
+    const focusOffset = semiMajor * eccentricity;
+
+    let angle = 0;
+
+    function drawOrbit() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw star (host)
+      ctx.beginPath();
+      ctx.arc(centerX - focusOffset, centerY, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'yellow';
+      ctx.fill();
+
+      // Draw ellipse (orbit)
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, semiMajor, semiMinor, 0, 0, 2 * Math.PI);
+      ctx.strokeStyle = 'white';
+      ctx.stroke();
+
+      // Draw planet
+      const x = centerX + semiMajor * Math.cos(angle) - focusOffset;
+      const y = centerY + semiMinor * Math.sin(angle);
+      ctx.beginPath();
+      ctx.arc(x, y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = 'cyan';
+      ctx.fill();
+
+      angle += 0.01;
+      requestAnimationFrame(drawOrbit);
+    }
+
+    drawOrbit();
+  </script>
+</body>
+</html>
